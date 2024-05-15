@@ -1,17 +1,25 @@
 (() => {
   setTimeout(()=>{
     var newReact = document.createElement("div");
-    newReact.setAttribute("id", "newId");
-    console.log(document);
-    console.log(document.body);
+    newReact.setAttribute("id", "app");
     document.body.appendChild(newReact);
-    window.onReciveData = (strs) => {
-      console.log('=====>', strs)
-    }
-    initOldPtt();
+    var newReactJs = document.createElement("script");
+    newReactJs.setAttribute("src", "http://localhost:8080/js/chunk-vendors.js");
+    document.body.appendChild(newReactJs);
+
+    var newReactJs2 = document.createElement("script");
+    newReactJs2.setAttribute("src", "http://localhost:8080/js/app.js");
+    document.body.appendChild(newReactJs2);
+
+    var style = document.createElement("style");
+    style.innerHTML = `#BBSWindow .main {
+      margin-top: 0!important;
+    }`;
+    document.body.appendChild(style);
   }, 1000)
 })();
-function initOldPtt(){
+function initOldPtt() {
+  document.getElementById('BBSWindow').style.position = 'static'
   !function(n) {
     var o = {};
     function r(e) {

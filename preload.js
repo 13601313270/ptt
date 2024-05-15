@@ -10,7 +10,6 @@ self.addEventListener('fetch', event => {
           Origin: 'https://term.ptt.cc',
         }
       })).then(response => {
-        console.log('!!!!!!!!!!!!!!!')
         return response;
       }).catch(error => {
         console.error('Fetch error:', error);

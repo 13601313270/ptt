@@ -1,18 +1,38 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    访客{{guestCount}}人
+    <input/>
+    <input/>
+    <button>保存</button>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
 
 export default defineComponent({
   name: 'HomeView',
   components: {
-    HelloWorld,
+  },
+  data(){
+    return {
+      guestCount: 0,
+    }
+  },
+  created() {
+    // @ts-ignore
+    window.onReciveData = (strs: string[][]) => {
+      console.log('=====---->', strs)
+      const lineIndex = strs.findIndex(str => str.find(v => v==='目前有'))
+      if(lineIndex>-1) {
+        const wordIndex = strs[lineIndex].findIndex(v => v==='目前有');
+        if(lineIndex>-1 && wordIndex>-1) {
+          this.guestCount = +(strs[lineIndex][wordIndex+1].slice(1, strs[lineIndex][wordIndex+1].length-1));
+        }
+      }
+    }
+    // @ts-ignore
+    initOldPtt();
   },
 });
 </script>
