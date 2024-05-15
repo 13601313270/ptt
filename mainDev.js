@@ -81,7 +81,7 @@ function createWindow() {
   })
   win.webContents.openDevTools();
   // win.loadFile(path.join(__dirname, './file/index.html')) // load the home page
-  win.loadURL('https://term.ptt.cc/index.html') // load the home page
+  win.loadURL('http://localhost:8080') // load the home page
   
 }
 
