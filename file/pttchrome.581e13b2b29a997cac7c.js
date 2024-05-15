@@ -11248,7 +11248,6 @@ function initOldPtt(){
                     id: "mainContainer",
                     onMouseMove: this.handleMouseMove
                 }, this.props.lines.map(function(chars, t) {
-                    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@', chars, t)
                     return React.createElement(pi, {
                         key: t,
                         chars: chars,
