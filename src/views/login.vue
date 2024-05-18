@@ -22,11 +22,36 @@ export default defineComponent({
     };
   },
   created() {
+    const single = new StrObj(window.lastReciveData);
+    const matchIndex = single.findTwoIndex("目前有");
+    console.log("matchIndex", matchIndex);
+    if (matchIndex) {
+      console.log("matchIndex", window.lastReciveData[matchIndex[0]][matchIndex[1] + 1]);
+      // @ts-ignore
+      this.guestCount = +window.lastReciveData[matchIndex[0]][matchIndex[1] + 1].match(
+        /\d+/
+      )[0];
+    }
     // @ts-ignore
     window.onReciveData = async (strs: string[][]) => {
       const single = new StrObj(strs);
-
-      if (single.findTwoIndex(" 請按任意鍵繼續 ") || single.findTwoIndex("按任意鍵繼續")) {
+      if (single.findTwoIndex("目前有") && single.findTwoIndex("請輸入代號")) {
+        const matchIndex = single.findTwoIndex("目前有");
+        console.log("matchIndex", matchIndex);
+        if (matchIndex) {
+          console.log(
+            "matchIndex",
+            window.lastReciveData[matchIndex[0]][matchIndex[1] + 1]
+          );
+          // @ts-ignore
+          this.guestCount = +window.lastReciveData[matchIndex[0]][
+            matchIndex[1] + 1
+          ].match(/\d+/)[0];
+        }
+      } else if (
+        single.findTwoIndex(" 請按任意鍵繼續 ") ||
+        single.findTwoIndex("按任意鍵繼續")
+      ) {
         await sleep(10);
         // @ts-ignore
         pttInput("a");

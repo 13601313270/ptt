@@ -11258,6 +11258,7 @@ function initOldPtt() {
                   })
                 });
                 console.log(allTexts)
+                onCommonReciveData(allTexts)
                 onReciveData(allTexts)
                 window.lastReciveData = allTexts;
                 return React.createElement("div", {
@@ -14452,7 +14453,9 @@ function initOldPtt() {
             bsStyle: "danger",
             className: "PageTopAlert",
             onDismiss: e
-        }, k.a.createElement("h4", null, Ai("alert_connectionHeader")), k.a.createElement("p", null, Ai("alert_connectionText")), k.a.createElement("p", null, k.a.createElement(we, {
+        },
+        k.a.createElement("h4", null, Ai("alert_connectionHeader")),
+        k.a.createElement("p", null, Ai("alert_connectionText")), k.a.createElement("p", null, k.a.createElement(we, {
             bsStyle: "danger",
             onClick: e
         }, Ai("alert_connectionReconnect")))))

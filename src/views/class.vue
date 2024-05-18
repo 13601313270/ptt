@@ -29,6 +29,7 @@ export default defineComponent({
       const splitIndexs = single.findTwoIndex(">     1");
       const allList: Array<{
         text: string;
+        desc: string;
         action: string;
       }> = [];
       // @ts-ignore
@@ -54,7 +55,7 @@ export default defineComponent({
       window.onReciveData = async (strs: string[][]) => {
         const single = new StrObj(strs);
         if (single.findTwoIndex("跳至第幾項: ")) {
-          pttSend("\r");
+          window.pttSend("\r");
         }
       };
     },

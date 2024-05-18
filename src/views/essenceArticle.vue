@@ -55,7 +55,7 @@ export default defineComponent({
       window.onReciveData = async (strs: string[][]) => {
         const single = new StrObj(strs);
         if (single.findTwoIndex("新位置 (可輸入多層數字): ")) {
-          pttSend("\r");
+          window.pttSend("\r");
         }
       };
     },

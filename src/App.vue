@@ -13,12 +13,14 @@ export default defineComponent({
   },
   created() {
     // @ts-ignore
-    window.onReciveData = async (strs: string[][]) => {
+    window.onCommonReciveData = async (strs: string[][]) => {
       const single = new StrObj(strs);
       if (single.findTwoIndex("請輸入代號")) {
         this.$router.push({
           name: "login",
         });
+      } else if (single.findTwoIndex("請按任意鍵繼續")) {
+        window.pttSend("\r");
       }
     };
     // @ts-ignore
