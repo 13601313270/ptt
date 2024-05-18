@@ -26,8 +26,9 @@ export default defineComponent({
     window.onReciveData = async (strs: string[][]) => {
       const single = new StrObj(strs);
 
-      if (single.findTwoIndex(" 請按任意鍵繼續 ")) {
+      if (single.findTwoIndex(" 請按任意鍵繼續 ") || single.findTwoIndex("按任意鍵繼續")) {
         await sleep(10);
+        // @ts-ignore
         pttInput("a");
       } else if (single.findTwoIndex("您要刪除以上錯誤嘗試的記錄嗎")) {
         // @ts-ignore
@@ -39,8 +40,10 @@ export default defineComponent({
           "注意: 您有其它連線已登入此帳號。您想刪除其他重複登入的連線嗎？"
         );
         if (result) {
+          // @ts-ignore
           pttInput("Y");
         } else {
+          // @ts-ignore
           pttInput("n");
         }
       } else if (single.findTwoIndex("【主功能表】")) {

@@ -15393,9 +15393,9 @@ function initOldPtt() {
             n.mouse_over(e)
         }, !1),
         "onwheel"in window ? window.addEventListener("wheel", function(e) {
-            n.mouse_scroll(e)
+            // n.mouse_scroll(e)
         }, !0) : window.addEventListener("mousewheel", function(e) {
-            n.mouse_scroll(e)
+            // n.mouse_scroll(e)
         }, !0),
         window.addEventListener("focus", function(e) {
             n.appFocused = !0,
