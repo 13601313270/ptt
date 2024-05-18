@@ -6135,8 +6135,8 @@ function initOldPtt() {
     }
     ,
     yt.prototype.focus = function() {
-        var e = Te.a.findDOMNode(this.toggle);
-        e && e.focus && e.focus()
+        // var e = Te.a.findDOMNode(this.toggle);
+        // e && e.focus && e.focus()
     }
     ,
     yt.prototype.focusNextOnOpen = function() {
@@ -9822,6 +9822,8 @@ function initOldPtt() {
             this._checkLeftDB = e,
             this._checkCurDB = t,
             this._sendFunc = n
+            console.log('99999999999-1', this._sendFunc)
+            window.pttSend = this._sendFunc.bind(this)
         }
         var e, t, n;
         return e = o,
@@ -9852,11 +9854,12 @@ function initOldPtt() {
         }, {
             key: "onKeyDown",
             value: function(e) {
-                this._onKeyDown(e) && e.preventDefault()
+              this._onKeyDown(e) && e.preventDefault()
             }
         }, {
             key: "_onKeyDown",
             value: function(e) {
+                // console.log('@@@@@@@@@@', e)
                 if (e.getModifierState("Meta"))
                     return !1;
                 if (e.ctrlKey || e.altKey)
@@ -9878,8 +9881,11 @@ function initOldPtt() {
                     if (e.shiftKey && "Insert" == e.key)
                         return !1;
                     t = Tr[e.key];
-                    if (t)
-                        return this._checkDB(e.key) ? this._send(t + t) : this._send(t);
+                    if (t) {
+                      console.log('99999999', this._send)
+                      return this._checkDB(e.key) ? this._send(t + t) : this._send(t);
+                    }
+                        
                     if (1 == e.key.length)
                         return !1
                 }
@@ -11076,7 +11082,7 @@ function initOldPtt() {
           return e.readChar(t, n),
           e
       }, new di(n,o,r,i,a,e))
-        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@===================', chars, chars.map(v => v.ch), ttt)
+        // console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@===================', chars, chars.map(v => v.ch), ttt)
         return React.createElement("span", {
             type: "bbsrow",
             srow: n
@@ -11251,7 +11257,9 @@ function initOldPtt() {
                     onHyperLinkMouseOut: n.handleHyperLinkMouseOut
                   })
                 });
+                console.log(allTexts)
                 onReciveData(allTexts)
+                window.lastReciveData = allTexts;
                 return React.createElement("div", {
                     id: "mainContainer",
                     onMouseMove: this.handleMouseMove
@@ -12919,6 +12927,7 @@ function initOldPtt() {
             t.bbscore.setInputAreaFocus(),
             t.onInput(e)
         }, !1);
+        window.pttInput = t.onInputStr.bind(t)
         function o() {
             return !t.bbscore.modalShown && !t.bbscore.contextMenuShown
         }
@@ -13006,9 +13015,13 @@ function initOldPtt() {
             console.log("setHighlightedRow: ".concat(e, ", this.buf.highlightCursor:").concat(this.buf.highlightCursor)),
             this.buf.highlightCursor && this.componentScreen.setCurrentHighlighted(e)
         },
-        onInput: function(e) {
-            this.bbscore.modalShown || this.bbscore.contextMenuShown || (this.isComposition ? this.updateInputBufferWidth() : (this.useEasyReadingMode && this.buf.startedEasyReading && !this.buf.easyReadingShowReplyText && !this.buf.easyReadingShowPushInitText && 229 == this.easyReadingKeyDownKeyCode && "X" != e.target.value || !e.target.value || this.onTextInput(e.target.value),
-            e.target.value = ""))
+        onInput: function(event) {
+            this.bbscore.modalShown || this.bbscore.contextMenuShown || (this.isComposition ? this.updateInputBufferWidth() : (this.useEasyReadingMode && this.buf.startedEasyReading && !this.buf.easyReadingShowReplyText && !this.buf.easyReadingShowPushInitText && 229 == this.easyReadingKeyDownKeyCode && "X" != event.target.value || !event.target.value || this.onTextInput(event.target.value),
+            event.target.value = ""))
+        },
+        onInputStr: function(eventStr) {
+          console.log(this)
+          this.bbscore.modalShown || this.bbscore.contextMenuShown || (this.isComposition ? this.updateInputBufferWidth() : (this.useEasyReadingMode && this.buf.startedEasyReading && !this.buf.easyReadingShowReplyText && !this.buf.easyReadingShowPushInitText && 229 == this.easyReadingKeyDownKeyCode && "X" != eventStr || !eventStr || this.onTextInput(eventStr)))
         },
         onTextInput: function(e, t) {
             t && (e = (e = (e = (e = (e = e.replace(/\r\n/g, "\r")).replace(/\n/g, "\r")).replace(/\r/g, "\r")).indexOf("") < 0 && 0 < this.lineWrap ? function(e, t, n) {
@@ -13046,8 +13059,8 @@ function initOldPtt() {
                 else
                     "End" === e.key && (2 != this.bbscore.buf.pageState && 3 != this.bbscore.buf.pageState || !this.bbscore.endTurnsOnLiveUpdate || (this.bbscore.onToggleLiveHelperModalState(),
                     n = !0));
-                n ? e.preventDefault() : (this._keyboard.onKeyDown(e),
-                e.defaultPrevented)
+                    
+                n ? e.preventDefault() : (this._keyboard.onKeyDown(e),e.defaultPrevented)
             }
         },
         setTermFontSize: function(e, t) {
@@ -13499,7 +13512,6 @@ function initOldPtt() {
     ,
     Ki.prototype._onMessage = function(e) {
         e = new Uint8Array(e.data);
-        console.log('datadata==============', String.fromCharCode.apply(String, e))
         this.dispatchEvent(new CustomEvent("data",{
             detail: {
                 data: String.fromCharCode.apply(String, e)

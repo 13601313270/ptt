@@ -16,5 +16,6 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'semi': 0,
     '@typescript-eslint/ban-ts-comment': 0,
+    'vue/multi-word-component-names': 0,
   },
 };
