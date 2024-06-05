@@ -32,20 +32,22 @@ export default defineComponent({
         desc: string;
         action: string;
       }> = [];
-      // @ts-ignore
-      for (let i = splitIndexs[0]; i < window.lastReciveData.length - 1; i++) {
+      if (splitIndexs && splitIndexs.length) {
         // @ts-ignore
-        const item = window.lastReciveData[i];
-        // @ts-ignore
-        for (let j = 0; j < item.length; j++) {
+        for (let i = splitIndexs[0]; i < window.lastReciveData.length - 1; i++) {
           // @ts-ignore
-          const matchText = item[j].match(/(\d+)\s+(\S+)\s+(.+)\s+/);
-          if (matchText) {
-            allList.push({
-              text: matchText[2],
-              desc: matchText[3],
-              action: matchText[1],
-            });
+          const item = window.lastReciveData[i];
+          // @ts-ignore
+          for (let j = 0; j < item.length; j++) {
+            // @ts-ignore
+            const matchText = item[j].match(/(\d+)\s+(\S+)\s+(.+)\s+/);
+            if (matchText) {
+              allList.push({
+                text: matchText[2],
+                desc: matchText[3],
+                action: matchText[1],
+              });
+            }
           }
         }
       }

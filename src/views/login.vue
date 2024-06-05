@@ -44,9 +44,9 @@ export default defineComponent({
             window.lastReciveData[matchIndex[0]][matchIndex[1] + 1]
           );
           // @ts-ignore
-          this.guestCount = +window.lastReciveData[matchIndex[0]][
+          this.guestCount = (+window.lastReciveData[matchIndex[0]][
             matchIndex[1] + 1
-          ].match(/\d+/)[0];
+          ] || '0').match(/\d+/)[0];
         }
       } else if (
         single.findTwoIndex(" 請按任意鍵繼續 ") ||
@@ -72,6 +72,23 @@ export default defineComponent({
           pttInput("n");
         }
       } else if (single.findTwoIndex("【主功能表】")) {
+        pttInput("C");
+        sleep(100);
+        pttSend("\r");
+        pttInput("14");
+        sleep(100);
+        pttSend("\r");
+        // this.$router.push({
+        //   name: "home",
+        // });
+      } else if (single.findTwoIndex("【主功能表】")) {
+        pttInput("C");
+        sleep(100);
+        pttSend("\r");
+        pttInput("14");
+        sleep(100);
+        pttSend("\r");
+      } else if (single.findTwoIndex("看板列表")) {
         this.$router.push({
           name: "home",
         });

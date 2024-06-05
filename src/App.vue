@@ -37,7 +37,8 @@ export default defineComponent({
   text-align: center;
   color: #2c3e50;
   background: white;
-  min-height: 400px;
+  height: 300px;
+  overflow-y: auto;
 }
 
 nav {

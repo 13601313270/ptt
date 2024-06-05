@@ -3,6 +3,7 @@ import Home from '../views/home.vue';
 import Login from '../views/login.vue';
 import EssenceArticle from '../views/essenceArticle.vue';// 精华文章
 import Class from '../views/class.vue';// 分组讨论取
+import List from '../views/list.vue';// 文章列表
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -26,6 +27,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'class',
     component: Class,
   },
+  {
+    path: '/list',
+    name: 'list',
+    component: List,
+  },
+  
 ];
 
 const router = createRouter({

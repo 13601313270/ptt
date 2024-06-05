@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div>看板列表</div>
+    <div>文章列表</div>
     <div class="list">
       <div v-for="item in allList" :key="item.action" class="item" @click="choose(item)">
         {{ item }}
@@ -88,9 +88,6 @@ export default defineComponent({
       pttSend("\r");
       sleep(100);
       pttSend("\r");
-      this.$router.push({
-        name: "essenceArticle",
-      });
     },
   },
 });
