@@ -3,28 +3,12 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import StrObj from "./common/StrObj";
 
 export default defineComponent({
   name: "HomeView",
   components: {},
   data() {
     return {};
-  },
-  created() {
-    // @ts-ignore
-    window.onCommonReciveData = async (strs: string[][]) => {
-      const single = new StrObj(strs);
-      if (single.findTwoIndex("請輸入代號")) {
-        this.$router.push({
-          name: "login",
-        });
-      } else if (single.findTwoIndex("請按任意鍵繼續")) {
-        window.pttSend("\r");
-      }
-    };
-    // @ts-ignore
-    initOldPtt();
   },
 });
 </script>
@@ -37,7 +21,6 @@ export default defineComponent({
   text-align: center;
   color: #2c3e50;
   background: white;
-  height: 300px;
   overflow-y: auto;
 }
 

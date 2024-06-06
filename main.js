@@ -1,7 +1,8 @@
-const { app, BrowserWindow, session, net } = require('electron')
+const { app, BrowserWindow, session, ipcMain } = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs');
+const puppeteer = require('puppeteer');
 
 
 function createWindow() {
@@ -82,6 +83,12 @@ function createWindow() {
   win.webContents.openDevTools();
   // win.loadFile(path.join(__dirname, './file/index.html')) // load the home page
   win.loadURL('https://term.ptt.cc/index.html') // load the home page
+  // win.loadFile(path.join(__dirname, './public/index.html')) // load the home page
+
+  ipcMain.on('asynchronous-message', (event, arg) => {
+    console.log(arg); // 打印渲染进程发送的消息
+    event.reply('asynchronous-reply', '主进程回复');
+  });
   
 }
 

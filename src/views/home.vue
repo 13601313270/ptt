@@ -53,10 +53,10 @@ export default defineComponent({
               }
             }
 
-            allList.push({
-              text,
-              action,
-            });
+            // allList.push({
+            //   text,
+            //   action,
+            // });
           }
         }
       }
@@ -82,15 +82,15 @@ export default defineComponent({
     },
     async choose(item: any) {
       // @ts-ignore
-      pttInput(item.action);
-      sleep(100);
-      // @ts-ignore
-      pttSend("\r");
-      sleep(100);
-      pttSend("\r");
-      this.$router.push({
-        name: "essenceArticle",
-      });
+      // pttInput(item.action);
+      // sleep(100);
+      // // @ts-ignore
+      // pttSend("\r");
+      // sleep(100);
+      // pttSend("\r");
+      // this.$router.push({
+      //   name: "essenceArticle",
+      // });
     },
   },
 });

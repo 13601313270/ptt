@@ -4,6 +4,11 @@ const path = require('path');
 
 module.exports = defineConfig({
   transpileDependencies: true,
+  pluginOptions: {
+    electronBuilder: {
+      preload: "src/preload.js"
+    }
+  }
   // devServer: {
     // https: true,
     // key: fs.readFileSync(path.join(__dirname, "/ssl/ssl.key")),
