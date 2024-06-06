@@ -4,57 +4,131 @@ let page;
 
 exports.loadPage = async (url) => {
   try {
-    console.log('-----> 0')
     if (browser === undefined) {
-      console.log('-----> 0.1')
       browser = await puppeteer.launch();
     }
     if (page === undefined) {
-      console.log('-----> 0.2')
       page = await browser.newPage();
     }
     console.log('-----> 1')
     await page.goto(url);
-    console.log('-----> 1.1')
     let content = await page.evaluate(() => document.body.innerHTML);
     if (content.includes('您即將進入之看板內容需滿十八歲方可瀏覽。')) {
-      console.log('-----> 2')
-      console.log(typeof content);
       const elements = await page.$$('[name=yes]');
       if (elements.length > 0) {
-        console.log('-----> 3')
-        console.log(elements);
         await elements[0].click();
-        console.log('点击点击');
         await new Promise(resolve => {
           setTimeout(resolve, 500)
         })
-        console.log('-----> 4')
         await page.goto(url);
-        console.log('-----> 5')
         content = await page.evaluate(() => document.body.innerHTML);
-        console.log('-----> 6')
-        // r-list-container
       }
     }
+
+
+    const pageNumLink = (await page.$$('.btn-group-paging>a'))[1];
+    const pageNum = (await pageNumLink.evaluate((v) => v.href)).match(/index(\d+).html/)[1];
+
     const list = await page.$$('.r-list-container>.r-ent');
-    // console.log(list);
     const returnListMap = [];
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
-      const title = await item.$eval('.title>a', e => {
-        return {
-          link: e.href,
-          title: e.textContent,
-        }
-      });
-      console.log(item, title)
+      let title;
+      try {
+        title = await item.$eval('.title>a', e => {
+          return {
+            link: e.href,
+            title: e.textContent,
+          }
+        });
+      } catch (e) {
+        title = await item.$eval('.title', e => {
+          return {
+            title: e.textContent,
+          }
+        });
+      }
+
       returnListMap.push({
         title: title.title,
         link: title.link,
       })
     }
-    return returnListMap;
+    return {
+      maxPage: (+pageNum) + 1,
+      list: returnListMap
+    };
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+exports.loadDetail = async (url) => {
+  try {
+    if (browser === undefined) {
+      browser = await puppeteer.launch();
+    }
+    if (page === undefined) {
+      page = await browser.newPage();
+    }
+
+    await page.goto(url);
+    const img = await page.$eval('#main-content img', e => {
+      return e.src;
+      // return {
+      //   img: e.innerHTML,
+      // }
+    });
+    return img
+    // let content = await page.evaluate(() => document.body.innerHTML);
+    // if (content.includes('您即將進入之看板內容需滿十八歲方可瀏覽。')) {
+    //   const elements = await page.$$('[name=yes]');
+    //   if (elements.length > 0) {
+    //     await elements[0].click();
+    //     await new Promise(resolve => {
+    //       setTimeout(resolve, 500)
+    //     })
+    //     await page.goto(url);
+    //     content = await page.evaluate(() => document.body.innerHTML);
+    //   }
+    // }
+
+
+    // const pageNumLink = (await page.$$('.btn-group-paging>a'))[1];
+    // const pageNum = (await pageNumLink.evaluate((v) => v.href)).match(/index(\d+).html/)[1];
+    // console.log('!!!!!=====11', pageNum);
+
+    // const list = await page.$$('.r-list-container>.r-ent');
+    // console.log('总共条数', list.length);
+    // const returnListMap = [];
+    // for (let i = 0; i < list.length; i++) {
+    //   const item = list[i];
+    //   console.log('item:', item);
+    //   let title;
+    //   try {
+    //     title = await item.$eval('.title>a', e => {
+    //       return {
+    //         link: e.href,
+    //         title: e.textContent,
+    //       }
+    //     });
+    //   } catch (e) {
+    //     title = await item.$eval('.title', e => {
+    //       return {
+    //         title: e.textContent,
+    //       }
+    //     });
+    //   }
+
+    //   returnListMap.push({
+    //     title: title.title,
+    //     link: title.link,
+    //   })
+    // }
+    // return {
+    //   maxPage: (+pageNum) + 1,
+    //   list: returnListMap
+    // };
   } catch (e) {
     console.log(e)
   }

@@ -14,6 +14,11 @@
         const mainProcessAPI = remote.require('./mainProcessAPI');
         return mainProcessAPI.loadPage(url);
       }
+      function loadDetail(url) {
+        const remote = require("@electron/remote");
+        const mainProcessAPI = remote.require('./mainProcessAPI');
+        return mainProcessAPI.loadDetail(url);
+      }
 
     </script>
     <noscript>
