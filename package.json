@@ -44,5 +44,6 @@
     "less": "^4.0.0",
     "less-loader": "^8.0.0",
     "typescript": "~4.9.5"
-  }
+  },
+  "repository": "https://github.com/13601313270/ptt.git"
 }
