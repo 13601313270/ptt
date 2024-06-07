@@ -14,10 +14,11 @@
       <div v-for="item in allList" :key="item.id" class="item" @click="choose(item)">
         {{ item.title }}
         <!-- {{ item.link }} -->
-        <img :src="linkToImg[item.img]" width="80" />
+        <img v-if="item.img" :src="linkToImg[item.img]" width="80" />
       </div>
     </div>
-    <div @click="initPage">下一页</div>
+    <div v-if="loading">加载中</div>
+    <div v-else @click="initPage">下一页</div>
   </div>
 </template>
 
@@ -29,7 +30,7 @@ import StrObj from "../common/StrObj";
 type Article = {
   id: number,
   title: string,
-  img: '',
+  img: string | null,
   height: number,
 }
 
@@ -44,6 +45,7 @@ const column = ref<{
 ])
 const allList = ref<Article[]>([]);
 const linkToImg = ref<any>({});
+const loading = ref<boolean>(false)
 
 console.log('!!!!', onMounted)
 onMounted(() => {
@@ -60,6 +62,7 @@ onMounted(() => {
 
 });
 async function initPage() {
+  loading.value = true
   // @ts-ignore
   loadPage(page.value === -1 ? "https://www.ptt.cc/bbs/Beauty/index.html" : `https://www.ptt.cc/bbs/Beauty/index${page.value}.html`).then(async (result) => {
     console.log("##########", result);
@@ -70,25 +73,53 @@ async function initPage() {
     for (let i = 0; i < newList.length; i++) {
       const item = newList[i];
       // @ts-ignore
-      const imgUrl = await loadDetail(item.link);
-      console.log('11111', imgUrl, item)
-      const image = new Image();
-      image.onload = function () {
-        // this.linkToImg[url] = imgUrl;
-        console.log('!!!!' + image.height)
-        const width = window.innerWidth / column.value.length
+      const imgUrls: string[] = await loadDetail(item.link, i);
+      console.log(imgUrls);
+      if (imgUrls && imgUrls.length === 0) {
         addDetail({
           id: 1,
           title: item.title,
-          img: imgUrl,
-          height: image.height / image.width * width,
+          img: null,
+          height: 20,
         })
+        continue;
+      }
+      let detailTemp: Article = {
+        id: 1,
+        title: item.title,
+        img: null,
+        height: 40,
       };
-      image.src = imgUrl;
-
-      // @ts-ignore
-      // this.allList.push(item);
+      if (imgUrls) {
+        for (let j = 0; j < imgUrls.length; j++) {
+          const url = imgUrls[j];
+          const isCanInclude = await (new Promise<boolean>(resolve => {
+            const image = new Image();
+            image.onload = function () {
+              // this.linkToImg[url] = imgUrl;
+              console.log('!!!!' + image.height)
+              const width = window.innerWidth / column.value.length
+              detailTemp = {
+                id: 1,
+                title: item.title,
+                img: url,
+                height: image.height / image.width * width,
+              }
+              resolve(true)
+            };
+            image.onerror = function () {
+              resolve(false)
+            }
+            image.src = url;
+          }))
+          if (isCanInclude) {
+            break
+          }
+        }
+      }
+      addDetail(detailTemp)
     }
+    loading.value = false;
   });
 }
 function addDetail(item: Article) {
@@ -102,72 +133,10 @@ function addDetail(item: Article) {
   }
   column.value[minHeightIndex].height += item.height;
   column.value[minHeightIndex].list.push(item)
-  // allList.value.push({
-
-  // })
 }
 function choose(item: Article) {
   console.log(item)
 }
-// export default defineComponent({
-//   name: "HomeView",
-//   components: {},
-//   data() {
-
-//   },
-//   created() {
-//     this.init();
-//   },
-//   methods: {
-//     init() {
-//       // @ts-ignore
-//       // loadPage("https://www.ptt.cc/bbs/Beauty/index.html").then(async (result) => {
-//       //   console.log("##########", result);
-//       //   const { maxPage, list } = result;
-//       //   const newList = list.reverse();
-//       //   this.page = maxPage;
-//       //   // this.allList = newList;
-//       //   for (let i = 0; i < newList.length; i++) {
-//       //     const item = newList[i];
-//       //     const imgUrl = await this.loadDetail(item.link);
-//       //     const image = new Image();
-//       //     image.onload = function () {
-//       //       this.linkToImg[url] = imgUrl;
-//       //     };
-//       //     image.src = imgUrl;
-
-//       //     // @ts-ignore
-//       //     // this.allList.push(item);
-//       //   }
-//       // });
-//     },
-//     async initPage() {
-//       this.page--;
-//       // @ts-ignore
-//       loadPage(`https://www.ptt.cc/bbs/Beauty/index${this.page}.html`).then((result) => {
-//         console.log(result);
-//         const { list } = result;
-//         // @ts-ignore
-//         this.allList = [...this.allList, ...list.reverse()];
-//       });
-//     },
-//     async loadDetail(url: string) {
-//       // @ts-ignore
-//       const result = await loadDetail(url);
-//       return result;
-//       // console.log("============", url, result);
-//     },
-//     async choose(item: any) {
-//       // @ts-ignore
-//       // pttInput(item.action);
-//       // sleep(100);
-//       // // @ts-ignore
-//       // pttSend("\r");
-//       // sleep(100);
-//       // pttSend("\r");
-//     },
-//   },
-// });
 </script>
 
 <style lang="less" scoped>
