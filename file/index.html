@@ -1,0 +1,10 @@
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="./favicon.ico"><title>ptt</title><script defer="defer" src="./js/chunk-vendors.eed1c492.js"></script><script defer="defer" src="./js/app.abf4d17f.js"></script><link href="./css/app.fea62936.css" rel="stylesheet"></head><body><script>function loadPage(url) {
+        const remote = require("@electron/remote");
+        const mainProcessAPI = remote.require('./mainProcessAPI');
+        return mainProcessAPI.loadPage(url);
+      }
+      function loadDetail(url) {
+        const remote = require("@electron/remote");
+        const mainProcessAPI = remote.require('./mainProcessAPI');
+        return mainProcessAPI.loadDetail(url);
+      }</script><noscript><strong>We're sorry but ptt doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>

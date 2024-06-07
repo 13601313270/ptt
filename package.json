@@ -8,7 +8,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "pack": "npx electron .",
-    "packMac": "npx electron-builder --mac --out=dist"
+    "packMac": "npx electron-builder --mac"
   },
   "author": "",
   "license": "ISC",
