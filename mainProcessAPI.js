@@ -1,6 +1,5 @@
 const { hostname } = require('os');
 const puppeteer = require('puppeteer');
-const cheerio = require('cheerio');
 
 let browser;
 let page;
