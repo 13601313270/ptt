@@ -10,7 +10,6 @@ exports.loadPage = async (url) => {
     if (page === undefined) {
       page = await browser.newPage();
     }
-    console.log('-----> 1')
     await page.goto(url);
     let content = await page.evaluate(() => document.body.innerHTML);
     if (content.includes('您即將進入之看板內容需滿十八歲方可瀏覽。')) {
@@ -73,13 +72,17 @@ exports.loadDetail = async (url) => {
     }
 
     await page.goto(url);
-    const img = await page.$eval('#main-content img', e => {
-      return e.src;
-      // return {
-      //   img: e.innerHTML,
-      // }
-    });
-    return img
+    try {
+      const img = await page.$eval('#main-content img', e => {
+        return e.src;
+        // return {
+        //   img: e.innerHTML,
+        // }
+      });
+      return img
+    } catch (e) {
+      return null;
+    }
     // let content = await page.evaluate(() => document.body.innerHTML);
     // if (content.includes('您即將進入之看板內容需滿十八歲方可瀏覽。')) {
     //   const elements = await page.$$('[name=yes]');
