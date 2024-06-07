@@ -4,13 +4,13 @@ import List from '../views/list.vue';// 文章列表
 
 
 const routes: Array<RouteRecordRaw> = [
+  // {
+  //   path: '/',
+  //   name: 'home',
+  //   component: Home,
+  // },
   {
     path: '/',
-    name: 'home',
-    component: Home,
-  },
-  {
-    path: '/list',
     name: 'list',
     component: List,
   },
