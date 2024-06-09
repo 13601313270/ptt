@@ -21,10 +21,22 @@ function createWindow() {
       webSecurity: false,
     }
   })
+  session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    // 设置代理服务器地址和端口
+    Object.assign(details.requestHeaders, {
+      'Proxy-Authorization': 'Basic ' + Buffer.from('proxy-user:proxy-password').toString('base64'),
+      'User-Agent': 'My-Agent',
+      'Cookie': 'over18=1'
+    });
+    console.log('=============')
+    console.log('=============')
+    console.log('=============')
+    callback({ cancel: false, requestHeaders: details.requestHeaders });
+  });
   require("@electron/remote/main").enable(win.webContents)
   win.webContents.openDevTools();
-  win.loadFile(path.join(__dirname, './file/index.html')) // load the home page
-  // win.loadURL('http://localhost:8080') // load the home page
+  // win.loadFile(path.join(__dirname, './file/index.html')) // load the home page
+  win.loadURL('http://localhost:8080') // load the home page
   // win.loadURL('https://term.ptt.cc/index.html') // load the home page
 }
 
