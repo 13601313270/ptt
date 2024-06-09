@@ -65,7 +65,7 @@ onMounted(() => {
 async function initPage() {
   loading.value = true
   const html: string = await new Promise(resolve => {
-    fetch('https://www.ptt.cc/bbs/Beauty/index.html')
+    fetch(page.value === -1 ? "https://www.ptt.cc/bbs/Beauty/index.html" : `https://www.ptt.cc/bbs/Beauty/index${page.value}.html`)
       .then(function (response) {
         return response.text()
       })
@@ -73,7 +73,6 @@ async function initPage() {
         resolve(text)
       })
   })
-  // console.log(html); // 输出获取到的文本内容
   const $ = load(html);
   const pageNumLink = $('.btn-group-paging>a')
   // @ts-ignore
@@ -83,28 +82,10 @@ async function initPage() {
 
   const listLink = $('.r-list-container>.r-ent>.title>a');
   const returnListMap = [];
-  // @ts-ignore
-  window.llll = listLink
   for (let i = 0; i < listLink.length; i++) {
     const item = listLink[i];
     // @ts-ignore
     let title = item.children[0].data;
-    // try {
-    //   item.children[0].data
-    //   title = await item.$eval('.title>a', e => {
-    //     return {
-    //       link: e.href,
-    //       title: e.textContent,
-    //     }
-    //   });
-    // } catch (e) {
-    //   title = await item.$eval('.title', e => {
-    //     return {
-    //       title: e.textContent,
-    //     }
-    //   });
-    // }
-
     returnListMap.push({
       title,
       link: 'https://www.ptt.cc/' + item.attribs.href,
@@ -113,12 +94,23 @@ async function initPage() {
   const newList = returnListMap.reverse();
 
   page.value = page.value === -1 ? maxPage - 1 : page.value - 1
-  // this.allList = newList;
   for (let i = 0; i < newList.length; i++) {
     const item = newList[i];
+    const html: string = await new Promise(resolve => {
+      fetch(item.link)
+        .then(function (response) {
+          return response.text()
+        })
+        .then(text => {
+          resolve(text)
+        })
+    })
+    const $ = load(html);
     // @ts-ignore
-    const imgUrls: string[] = await loadDetail(item.link, i);
-    console.log(imgUrls);
+    const imgUrls = $('#main-content img').slice(0, 3)
+    // console.log(html)
+    // @ts-ignore
+    window.sss = imgUrls
     if (imgUrls && imgUrls.length === 0) {
       addDetail({
         id: 1,
@@ -136,12 +128,11 @@ async function initPage() {
     };
     if (imgUrls) {
       for (let j = 0; j < imgUrls.length; j++) {
-        const url = imgUrls[j];
+        const url = imgUrls[j].attribs.src;
         const isCanInclude = await (new Promise<boolean>(resolve => {
           const image = new Image();
           image.onload = function () {
             // this.linkToImg[url] = imgUrl;
-            console.log('!!!!' + image.height)
             const width = window.innerWidth / column.value.length
             detailTemp = {
               id: 1,
@@ -164,89 +155,6 @@ async function initPage() {
     addDetail(detailTemp)
   }
   loading.value = false;
-  return
-  // for (let i = 0; i < list.length; i++) {
-  //   const item = list[i];
-  //   let title;
-  //   try {
-  //     title = await item.$eval('.title>a', e => {
-  //       return {
-  //         link: e.href,
-  //         title: e.textContent,
-  //       }
-  //     });
-  //   } catch (e) {
-  //     title = await item.$eval('.title', e => {
-  //       return {
-  //         title: e.textContent,
-  //       }
-  //     });
-  //   }
-
-  //   returnListMap.push({
-  //     title: title.title,
-  //     link: title.link,
-  //   })
-  // }
-  return;
-  // @ts-ignore
-  loadPage(page.value === -1 ? "https://www.ptt.cc/bbs/Beauty/index.html" : `https://www.ptt.cc/bbs/Beauty/index${page.value}.html`).then(async (result) => {
-    console.log("##########", result);
-    const { maxPage, list } = result;
-    const newList = list.reverse();
-    page.value = page.value === -1 ? maxPage - 1 : page.value - 1
-    // this.allList = newList;
-    for (let i = 0; i < newList.length; i++) {
-      const item = newList[i];
-      // @ts-ignore
-      const imgUrls: string[] = await loadDetail(item.link, i);
-      console.log(imgUrls);
-      if (imgUrls && imgUrls.length === 0) {
-        addDetail({
-          id: 1,
-          title: item.title,
-          img: null,
-          height: 20,
-        })
-        continue;
-      }
-      let detailTemp: Article = {
-        id: 1,
-        title: item.title,
-        img: null,
-        height: 40,
-      };
-      if (imgUrls) {
-        for (let j = 0; j < imgUrls.length; j++) {
-          const url = imgUrls[j];
-          const isCanInclude = await (new Promise<boolean>(resolve => {
-            const image = new Image();
-            image.onload = function () {
-              // this.linkToImg[url] = imgUrl;
-              console.log('!!!!' + image.height)
-              const width = window.innerWidth / column.value.length
-              detailTemp = {
-                id: 1,
-                title: item.title,
-                img: url,
-                height: image.height / image.width * width,
-              }
-              resolve(true)
-            };
-            image.onerror = function () {
-              resolve(false)
-            }
-            image.src = url;
-          }))
-          if (isCanInclude) {
-            break
-          }
-        }
-      }
-      addDetail(detailTemp)
-    }
-    loading.value = false;
-  });
 }
 function addDetail(item: Article) {
   let minHeightIndex = 0;

@@ -28,16 +28,12 @@ function createWindow() {
       'User-Agent': 'My-Agent',
       'Cookie': 'over18=1'
     });
-    console.log('=============')
-    console.log('=============')
-    console.log('=============')
     callback({ cancel: false, requestHeaders: details.requestHeaders });
   });
   require("@electron/remote/main").enable(win.webContents)
-  win.webContents.openDevTools();
-  // win.loadFile(path.join(__dirname, './file/index.html')) // load the home page
-  win.loadURL('http://localhost:8080') // load the home page
-  // win.loadURL('https://term.ptt.cc/index.html') // load the home page
+  // win.webContents.openDevTools();
+  win.loadFile(path.join(__dirname, './file/index.html')) // load the home page
+  // win.loadURL('http://localhost:8080') // load the home page
 }
 
 app.whenReady().then(createWindow)
