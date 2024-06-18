@@ -2,8 +2,6 @@ const { app, BrowserWindow, session, ipcMain } = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs');
-const puppeteer = require('puppeteer');
-
 
 function createWindow() {
 

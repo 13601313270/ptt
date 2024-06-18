@@ -3,10 +3,9 @@
     <div>文章列表</div>
     <div class="columnList">
       <div v-for="column in column" :key="column.id" class="column">
-        <div v-for="article in column.list" :key="article.id" class="article"
-          :style="{ height: article.height + 'px' }">
-          {{ article.title }}
-          <img :src="article.img" style="width: 90%;" />
+        <div v-for="article in column.list" :key="article.id" class="article">
+          <img :src="article.img" v-if="article.img" style="width: 100%;opacity: 0.1;" />
+          <div class="title">{{ article.title }}</div>
         </div>
       </div>
     </div>
@@ -174,19 +173,35 @@ function choose(item: Article) {
 </script>
 
 <style lang="less" scoped>
+.home {
+  background-color: #f8f7f3;
+  height: 100vh;
+}
+
 .columnList {
   display: flex;
+  padding: 16px;
 
   .column {
     flex-grow: 1;
-    width: 50%;
+    width: 358px;
 
     &:not(:first-child) {
       margin-left: 12px;
     }
 
     .article {
-      border: solid 1px rgb(255, 64, 0);
+      border: solid 1px rgb(245, 245, 245);
+      box-sizing: border-box;
+      background-color: white;
+      min-height: 120px;
+      margin-top: 16px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      .title {
+        padding: 16px;
+      }
     }
   }
 }

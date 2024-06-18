@@ -31,9 +31,9 @@ function createWindow() {
     callback({ cancel: false, requestHeaders: details.requestHeaders });
   });
   require("@electron/remote/main").enable(win.webContents)
-  // win.webContents.openDevTools();
-  win.loadFile(path.join(__dirname, './file/index.html')) // load the home page
-  // win.loadURL('http://localhost:8080') // load the home page
+  win.webContents.openDevTools();
+  // win.loadFile(path.join(__dirname, './file/index.html')) // load the home page
+  win.loadURL('http://localhost:8080') // load the home page
 }
 
 app.whenReady().then(createWindow)
