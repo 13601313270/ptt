@@ -9,8 +9,9 @@ remote.initialize();
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 800,
+    width: 400,
     height: 600,
+    resizable: false,
     webPreferences: {
       nodeIntegration: true,
       devTools: true, // Enable DevTools

@@ -36,9 +36,10 @@ import { load } from 'cheerio'
 type Article = {
   id: number,
   title: string,
+  link: string,
   img: string | null,
   height: number,
-  content: string,
+  content: string | null,// null的时候点击再请求一次
 }
 
 const page = ref<number>(-1);
@@ -58,16 +59,6 @@ const popArticle = ref<Article | null>(null)
 console.log('!!!!', onMounted)
 onMounted(() => {
   initPage()
-  // alert(1);
-  // setInterval(() => {
-  //   addDetail({
-  //     id: 1,
-  //     title: '第一个',
-  //     img: '',
-  //     height: Math.round(Math.random() * 100) + 10,
-  //   })
-  // }, 1000)
-
 });
 async function initPage() {
   loading.value = true
@@ -95,35 +86,75 @@ async function initPage() {
     let title = item.children[0].data;
     returnListMap.push({
       title,
-      link: 'https://www.ptt.cc/' + item.attribs.href,
-    })
+      link: 'https://www.ptt.cc' + item.attribs.href,
+    });
   }
   const newList = returnListMap.reverse();
 
   page.value = page.value === -1 ? maxPage - 1 : page.value - 1
   for (let i = 0; i < newList.length; i++) {
     const item = newList[i];
-    const html: string = await new Promise(resolve => {
+    const html: string | null = await new Promise<string | null>(resolve => {
+      let result: null | true | false = null
+      setTimeout(() => {
+        if (result === null) {
+          resolve(null)
+          result = true;
+        }
+      }, 2000)
       fetch(item.link)
         .then(function (response) {
           return response.text()
         })
         .then(text => {
-          resolve(text)
+          if (result === null) {
+            resolve(text)
+            result = true;
+          }
         })
     })
+    if (html === null) {
+      addDetail({
+        id: Math.random() * 10000,
+        title: item.title,
+        img: null,
+        height: 0,
+        link: item.link,
+        content: null,// $('#main-content').html() as string,
+      })
+      continue;
+    }
     const $ = load(html);
     // @ts-ignore
-    const imgUrls = $('#main-content img').slice(0, 1)
-    // console.log(html)
+    let imgUrls = (Array.from($('#main-content img')) as Element[])
+      .sort((a, b) => {
+        // @ts-ignore
+        const firstCache = a.attribs.src.includes("https://cache.ptt.cc");
+        // @ts-ignore
+        const secondCache = b.attribs.src.includes("https://cache.ptt.cc");
+        if (firstCache) {
+          return -1;
+        } else {
+          if (secondCache) {
+            return 1;
+          } else {
+            return -1;
+          }
+        }
+      })
+
     // @ts-ignore
-    window.sss = imgUrls
+    // console.log('imgUrls.map(v => v.attribs.src)', imgUrls.map(v => v.attribs.src))
+    imgUrls = imgUrls.slice(0, 1)
+    // @ts-ignore
+    window.sss = imgUrls;
     if (imgUrls && imgUrls.length === 0) {
       addDetail({
         id: 1,
         title: item.title,
         img: null,
         height: 20,
+        link: item.link,
         // @ts-ignore
         content: $('#main-content').html(),
       })
@@ -133,31 +164,52 @@ async function initPage() {
       id: 1,
       title: item.title,
       img: null,
+      link: item.link,
       height: 40,
       content: '',
     };
     if (imgUrls) {
       for (let j = 0; j < imgUrls.length; j++) {
+        // @ts-ignore
         const url = imgUrls[j].attribs.src;
         const isCanInclude = await (new Promise<boolean>(resolve => {
+          let result: null | true | false = null;
+          setTimeout(() => {
+            if (result === null) {
+              detailTemp = {
+                id: 1,
+                title: item.title,
+                img: null,
+                link: item.link,
+                height: 0,
+                content: $('#main-content').html() as string,
+              }
+              resolve(false);
+              result = false;
+            }
+          }, 3000);
           const image = new Image();
           image.onload = function () {
-            // this.linkToImg[url] = imgUrl;
             const width = window.innerWidth / column.value.length
             detailTemp = {
               id: 1,
               title: item.title,
               img: url,
+              link: item.link,
               height: image.height / image.width * width,
               content: $('#main-content').html() as string,
             }
-            resolve(true)
-            setTimeout(() => {
-              resolve(false);
-            }, 3000);
+            if (result === null) {
+              resolve(true)
+              result = true;
+            }
+
           };
           image.onerror = function () {
-            resolve(false)
+            if (result === null) {
+              resolve(false)
+              result = false;
+            }
           }
           image.src = url;
         }))
@@ -179,18 +231,21 @@ function addDetail(item: Article) {
       minHeightIndex = i;
     }
   }
-  // if (column.value.length) {
-  //   for (let i = 0; i < column.value.length; i++) {
-  //     if (column.value[i].height < column.value[minHeightIndex].height) {
-  //       minHeightIndex = i;
-  //     }
-  //   }
-  // }
   column.value[minHeightIndex].height += item.height;
   column.value[minHeightIndex].list.push(item)
 }
 function choose(item: Article) {
   console.log(item)
+  if (item.content === null) {
+    fetch(item.link)
+      .then(function (response) {
+        return response.text()
+      })
+      .then(text => {
+        const $ = load(text);
+        item.content = $('#main-content').html();
+      })
+  }
   popArticle.value = item;
 }
 </script>
@@ -281,6 +336,9 @@ function choose(item: Article) {
       text-align: center;
       flex-grow: 1;
       font-size: 40px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
