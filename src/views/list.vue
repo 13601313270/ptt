@@ -1,23 +1,27 @@
 <template>
   <div class="home">
-    <div>文章列表</div>
+    <!-- <div>文章列表</div> -->
     <div class="columnList" ref="columnList">
       <div v-for="column in column" :key="column.id" class="column">
-        <div v-for="article in column.list" :key="article.id" class="article">
-          <img :src="article.img" v-if="article.img" style="width: 100%;opacity: 0.1;" />
+        <div v-for="article in column.list" :key="article.id" class="article" @click="choose(article)">
+          <img :src="article.img" v-if="article.img" style="width: 100%;" />
           <div class="title">{{ article.title }}</div>
         </div>
       </div>
     </div>
-    <div class="list">
-      <div v-for="item in allList" :key="item.id" class="item" @click="choose(item)">
-        {{ item.title }}
-        <!-- {{ item.link }} -->
-        <img v-if="item.img" :src="linkToImg[item.img]" width="80" />
+    <div v-if="loading" class="loading">加載中</div>
+    <div v-else @click="initPage" class="nextPage">下一頁</div>
+    <div v-if="popArticle" class="popArticle">
+      <div class="nav">
+        <div class="back" @click="popArticle = null">
+          <img src="@/assets/back.png" />
+        </div>
+        <div class="title">{{ popArticle.title }}</div>
+      </div>
+      <div class="content">
+        <div v-html="popArticle.content"></div>
       </div>
     </div>
-    <div v-if="loading">加载中</div>
-    <div v-else @click="initPage">下一页</div>
   </div>
 </template>
 
@@ -32,6 +36,7 @@ type Article = {
   title: string,
   img: string | null,
   height: number,
+  content: string,
 }
 
 const page = ref<number>(-1);
@@ -43,10 +48,10 @@ const column = ref<{
   { id: 1, height: 0, list: [], },
   { id: 2, height: 0, list: [], },
 ])
-const allList = ref<Article[]>([]);
 const linkToImg = ref<any>({});
 const loading = ref<boolean>(false)
 const columnList = ref(null)
+const popArticle = ref<Article | null>(null)
 
 console.log('!!!!', onMounted)
 onMounted(() => {
@@ -117,6 +122,8 @@ async function initPage() {
         title: item.title,
         img: null,
         height: 20,
+        // @ts-ignore
+        content: $('#main-content').html(),
       })
       continue;
     }
@@ -125,6 +132,7 @@ async function initPage() {
       title: item.title,
       img: null,
       height: 40,
+      content: '',
     };
     if (imgUrls) {
       for (let j = 0; j < imgUrls.length; j++) {
@@ -139,6 +147,7 @@ async function initPage() {
               title: item.title,
               img: url,
               height: image.height / image.width * width,
+              content: $('#main-content').html() as string,
             }
             resolve(true)
           };
@@ -177,6 +186,7 @@ function addDetail(item: Article) {
 }
 function choose(item: Article) {
   console.log(item)
+  popArticle.value = item;
 }
 </script>
 
@@ -227,5 +237,84 @@ function choose(item: Article) {
     margin: 24px;
     border-radius: 8px;
   }
+}
+
+.popArticle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  height: 100vh;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  .nav {
+    height: 88px;
+    display: flex;
+    align-items: center;
+    border-bottom: solid 1px #efefef;
+
+    .back {
+      height: 88px;
+      width: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      >img {
+        width: 66px;
+        height: 66px;
+      }
+    }
+
+    .title {
+      margin-right: 88px;
+      text-align: center;
+      flex-grow: 1;
+      font-size: 40px;
+    }
+  }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  :deep(.richcontent) {
+    max-width: 100%;
+
+    img {
+      max-width: 100%;
+      // opacity: 0.05;
+    }
+  }
+
+  :deep(.article-metaline) {
+    border: solid 1px red;
+    display: none;
+  }
+
+  :deep(.article-metaline-right) {
+    border: solid 1px red;
+    display: none;
+  }
+}
+
+.loading {
+  min-height: 88px;
+  line-height: 88px;
+}
+
+.nextPage {
+  min-height: 88px;
+  line-height: 88px;
+  border: solid 1px rgb(202, 202, 202);
+  box-sizing: border-box;
+  margin: 16px;
+  border-radius: 8px;
 }
 </style>
