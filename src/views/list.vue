@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div>文章列表</div>
-    <div class="columnList">
+    <div class="columnList" ref="columnList">
       <div v-for="column in column" :key="column.id" class="column">
         <div v-for="article in column.list" :key="article.id" class="article">
           <img :src="article.img" v-if="article.img" style="width: 100%;opacity: 0.1;" />
@@ -46,6 +46,7 @@ const column = ref<{
 const allList = ref<Article[]>([]);
 const linkToImg = ref<any>({});
 const loading = ref<boolean>(false)
+const columnList = ref(null)
 
 console.log('!!!!', onMounted)
 onMounted(() => {
@@ -106,7 +107,7 @@ async function initPage() {
     })
     const $ = load(html);
     // @ts-ignore
-    const imgUrls = $('#main-content img').slice(0, 3)
+    const imgUrls = $('#main-content img').slice(0, 2)
     // console.log(html)
     // @ts-ignore
     window.sss = imgUrls
@@ -157,13 +158,20 @@ async function initPage() {
 }
 function addDetail(item: Article) {
   let minHeightIndex = 0;
-  if (column.value.length) {
-    for (let i = 0; i < column.value.length; i++) {
-      if (column.value[i].height < column.value[minHeightIndex].height) {
-        minHeightIndex = i;
-      }
+
+  const allColumn = columnList.value.children
+  for (let i = 0; i < allColumn.length; i++) {
+    if (allColumn[i].clientHeight < allColumn[minHeightIndex].clientHeight) {
+      minHeightIndex = i;
     }
   }
+  // if (column.value.length) {
+  //   for (let i = 0; i < column.value.length; i++) {
+  //     if (column.value[i].height < column.value[minHeightIndex].height) {
+  //       minHeightIndex = i;
+  //     }
+  //   }
+  // }
   column.value[minHeightIndex].height += item.height;
   column.value[minHeightIndex].list.push(item)
 }
@@ -180,6 +188,7 @@ function choose(item: Article) {
 
 .columnList {
   display: flex;
+  align-items: flex-start;
   padding: 16px;
 
   .column {
@@ -199,6 +208,7 @@ function choose(item: Article) {
       border-radius: 12px;
       display: flex;
       flex-direction: column;
+
       .title {
         padding: 16px;
       }
