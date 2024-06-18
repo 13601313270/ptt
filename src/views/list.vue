@@ -10,7 +10,9 @@
       </div>
     </div>
     <div v-if="loading" class="loading">加載中</div>
-    <div v-else @click="initPage" class="nextPage">下一頁</div>
+    <div v-else @click="initPage" class="nextPage">
+      <div class="button">下一頁</div>
+    </div>
     <div v-if="popArticle" class="popArticle">
       <div class="nav">
         <div class="back" @click="popArticle = null">
@@ -112,7 +114,7 @@ async function initPage() {
     })
     const $ = load(html);
     // @ts-ignore
-    const imgUrls = $('#main-content img').slice(0, 2)
+    const imgUrls = $('#main-content img').slice(0, 1)
     // console.log(html)
     // @ts-ignore
     window.sss = imgUrls
@@ -150,6 +152,9 @@ async function initPage() {
               content: $('#main-content').html() as string,
             }
             resolve(true)
+            setTimeout(() => {
+              resolve(false);
+            }, 3000);
           };
           image.onerror = function () {
             resolve(false)
@@ -194,6 +199,7 @@ function choose(item: Article) {
 .home {
   background-color: #f8f7f3;
   height: 100vh;
+  overflow-y: auto;
 }
 
 .columnList {
@@ -305,16 +311,19 @@ function choose(item: Article) {
 }
 
 .loading {
-  min-height: 88px;
-  line-height: 88px;
+  min-height: 160px;
+  line-height: 160px;
 }
 
 .nextPage {
-  min-height: 88px;
-  line-height: 88px;
-  border: solid 1px rgb(202, 202, 202);
-  box-sizing: border-box;
-  margin: 16px;
-  border-radius: 8px;
+  padding: 16px;
+
+  .button {
+    height: 88px;
+    line-height: 88px;
+    border: solid 1px rgb(202, 202, 202);
+    box-sizing: border-box;
+    border-radius: 8px;
+  }
 }
 </style>
