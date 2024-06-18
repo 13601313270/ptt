@@ -126,26 +126,7 @@ async function initPage() {
     }
     const $ = load(html);
     // @ts-ignore
-    let imgUrls = (Array.from($('#main-content img')) as Element[])
-      .sort((a, b) => {
-        // @ts-ignore
-        const firstCache = a.attribs.src.includes("https://cache.ptt.cc");
-        // @ts-ignore
-        const secondCache = b.attribs.src.includes("https://cache.ptt.cc");
-        if (firstCache) {
-          return -1;
-        } else {
-          if (secondCache) {
-            return 1;
-          } else {
-            return -1;
-          }
-        }
-      })
-
-    // @ts-ignore
-    // console.log('imgUrls.map(v => v.attribs.src)', imgUrls.map(v => v.attribs.src))
-    imgUrls = imgUrls.slice(0, 1)
+    let imgUrls = (Array.from($('#main-content img')) as Element[]).slice(0, 1)
     // @ts-ignore
     window.sss = imgUrls;
     if (imgUrls && imgUrls.length === 0) {
